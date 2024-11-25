@@ -1,3 +1,36 @@
-.MuiDataGrid-row--borderBottom .css-yseucu-MuiDataGrid-columnHeaderRow{
-    background-color: rgb(54, 52, 50);
-}
+/* Ensure the HTML and body tags take up full height */
+html, body {
+    height: 100%;
+    margin: 0; /* Remove any default margin from body */
+  }
+  
+  /* Set the login container to take up 100% of the viewport height */
+  .login-body {
+    background-image: url('../public/ensa.png');
+    height: 100vh; /* Make the div take up full screen height */
+    background-size: cover; /* Ensure the background image covers the whole div */
+    background-position: center; /* Center the background image */
+    display: flex; /* To center content inside */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+  }
+  
+  /* Login container: Ensure it's centered with padding, and has a transparent background */
+  .login-container {
+    padding: 20px 40px 20px 20px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Adjust as needed */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Center items horizontally */
+  }
+  
+  /* Optional: Adding some margin to the form inputs and button for spacing */
+  .MuiTextField-root, .MuiFormControl-root, .MuiButton-root {
+    margin-bottom: 15px; /* Add space between input fields */
+  }
+  

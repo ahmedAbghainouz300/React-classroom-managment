@@ -13,10 +13,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Home", "Filiere", "Matiere", "Emploi", "Reservation"];
+const pages = ["Home", "Emploi", "Reservation", "Liberation"];
 const settings = ["Profile", "Logout"];
 
-export default function CoordinateurLayout() {
+export default function ProfesseurLayout() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate(); // Corrected usage of the hook
 

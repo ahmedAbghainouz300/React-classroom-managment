@@ -13,12 +13,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Home", "Filiere", "Matiere", "Emploi", "Reservation"];
+const pages = ["Home", "Classe", "Emploi", "Reservation"];
 const settings = ["Profile", "Logout"];
-
-export default function CoordinateurLayout() {
+export default function ResponsableLayout() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const navigate = useNavigate(); // Corrected usage of the hook
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -30,7 +29,7 @@ export default function CoordinateurLayout() {
 
   const handleClickUserMenu = (setting) => {
     if (setting === "Logout") {
-      navigate("/"); // Navigates to the login page (root)
+      navigate("/");
     }
     setAnchorElUser(null);
   };
