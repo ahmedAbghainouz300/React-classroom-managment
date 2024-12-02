@@ -31,6 +31,8 @@ export default function ProfesseurLayout() {
   const handleClickUserMenu = (setting) => {
     if (setting === "Logout") {
       navigate("/"); // Navigates to the login page (root)
+    } else if (setting === "Profile") {
+      navigate("/ProfileP"); // Navigates to the login page (root)
     }
     setAnchorElUser(null);
   };

@@ -32,6 +32,9 @@ export default function CoordinateurLayout() {
     if (setting === "Logout") {
       navigate("/"); // Navigates to the login page (root)
     }
+    if (setting === "Profile") {
+      navigate("/profile_c");
+    }
     setAnchorElUser(null);
   };
 

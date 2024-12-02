@@ -1,175 +1,75 @@
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import {
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
-import Divider from "@mui/material/Divider";
+import * as React from "react";
+import { Card } from "@mui/material"; // Import Card component
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { useState } from "react";
 
-const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
 export default function Emploi() {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [formData, setFormData] = useState({
-    libelle: "",
-    effectif: "",
-  });
+  const [showPdf, setShowPdf] = useState(false); // To control PDF display
+  const [pdfPath, setPdfPath] = useState(
+    "C:/Users/HP/Downloads/CV_2024-11-21_AHMED_ABGHAINOUZ.pdf"
+  ); // Local path to PDF
 
-  // Function to open the dialog
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
+  const handleLearnMore = () => {
+    setShowPdf(true);
   };
 
-  // Function to close the dialog
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  // Handle form field changes
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  // Function to handle form submission
-  const handleSubmit = () => {
-    console.log("Form Submitted", formData);
-    // Here you can send the formData to your backend or update your state
-    setOpenDialog(false);
+  const handleDownload = () => {
+    // Trigger download action
+    const link = document.createElement("a");
+    link.href = pdfPath;
+    link.download = pdfPath.split("/").pop(); // Set the filename to the last part of the URL
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
-    <div className="container">
-      <Divider style={{ margin: "20px" }} />
-      <div
-        className="add-form"
-        style={{ display: "flex", justifyContent: "center" }}
-      >
-        <Button
-          variant="contained"
-          onClick={handleOpenDialog}
-          sx={{ backgroundColor: "#D4A017" }}
-        >
-          nouvelle Filiere
-        </Button>
-      </div>
-
-      <Divider style={{ margin: "20px" }} />
-      {/* Dialog to show the form */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
-          Ajouter Emploi
-        </DialogTitle>
-        <DialogContent>
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "300px",
-              "& > :not(style)": { m: 1 },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <FormControl fullWidth>
-              <InputLabel htmlFor="libelle">Libelle</InputLabel>
-              <OutlinedInput
-                id="libelle"
-                name="libelle"
-                label="Libelle"
-                value={formData.libelle}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl fullWidth>
-              <InputLabel htmlFor="effectif">Effectif</InputLabel>
-              <OutlinedInput
-                id="effectif"
-                name="effectif"
-                label="Effectif"
-                type="number"
-                value={formData.effectif}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-          </Box>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Paper>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-column": {
-              backgroundColor: "black",
-              color: "Black",
-              textDecoration: "BOLD", // Text color of the header
-            },
-            "& .MuiDataGrid-cell": {
-              color: "#4F4F4F", // Text color for cells
-            },
-          }}
+    <div>
+      <Card sx={{ maxWidth: 345 }}>
+        <CardMedia
+          component="img"
+          alt="Emploi image"
+          height="140"
+          image="/static/images/cards/contemplative-reptile.jpg"
         />
-      </Paper>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            Example Emploi
+          </Typography>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Example description of the Emploi. This is a placeholder text.
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {showPdf ? (
+            <Button size="small" onClick={handleDownload}>
+              Download PDF
+            </Button>
+          ) : (
+            <Button size="small" onClick={handleLearnMore}>
+              Learn More
+            </Button>
+          )}
+        </CardActions>
+      </Card>
+
+      {/* Display PDF */}
+      {showPdf && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>View PDF:</h3>
+          <iframe
+            src={pdfPath}
+            width="600"
+            height="400"
+            style={{ border: "1px solid #ccc" }}
+            title="Emploi PDF"
+          />
+        </div>
+      )}
     </div>
   );
 }

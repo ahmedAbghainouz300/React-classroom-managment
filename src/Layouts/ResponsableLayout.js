@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Home", "Classe", "Emploi", "Reservation"];
+const pages = ["Home", "Salle", "Emploi", "Reservation"];
 const settings = ["Profile", "Logout"];
 export default function ResponsableLayout() {
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -30,6 +30,8 @@ export default function ResponsableLayout() {
   const handleClickUserMenu = (setting) => {
     if (setting === "Logout") {
       navigate("/");
+    } else if (setting === "Profile") {
+      navigate("/ProfileR");
     }
     setAnchorElUser(null);
   };

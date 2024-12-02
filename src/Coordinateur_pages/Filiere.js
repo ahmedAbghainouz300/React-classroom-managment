@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -14,59 +14,144 @@ import {
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
-const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
-
 export default function Filiere() {
-  // State for managing the dialog visibility and the form data
+  const paginationModel = { page: 0, pageSize: 5 };
+  const columns = [
+    { field: "id", headerName: "ID", width: 80 },
+    { field: "libelle", headerName: "LIBELL", width: 200 },
+    { field: "effectif", headerName: "EFFECTIF", type: "number", width: 100 },
+    {
+      field: "Cordinateur",
+      headerName: "Coordinateur Name",
+      width: 250,
+      valueGetter: (value, row) =>
+        `${row.coordinateur.nom || ""} ${row.coordinateur.prenom || ""}`,
+    },
+    {
+      field: "edit",
+      headerName: "Edit",
+      width: 120,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleEdit(params.row)} // Correctly using handleEdit function
+        >
+          Edit
+        </Button>
+      ),
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      width: 120,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleDelete(params.row.id)} // Correctly using handleDelete function
+        >
+          Delete
+        </Button>
+      ),
+    },
+  ];
   const [openDialog, setOpenDialog] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    libelle: "",
+    coordinateur: {
+      email: "",
+      id: 0,
+      nom: "",
+      prenom: "",
+      telephone: 0,
+    },
     effectif: "",
+    id: 0,
+    libelle: "",
   });
+  const [filiereData, setFiliereData] = useState([]);
 
-  // Function to open the dialog
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/GestionWEB/filiere/get"
+        );
+        const data = await response.json();
+        setFiliereData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleOpenDialog = () => {
     setOpenDialog(true);
+    setEditMode(false);
+    setFormData({
+      coordinateur: {
+        email: "",
+        id: 0,
+        nom: "",
+        prenom: "",
+        telephone: 0,
+      },
+      effectif: "",
+      id: 0,
+      libelle: "",
+    });
   };
 
-  // Function to close the dialog
+  const handleEdit = (row) => {
+    setOpenDialog(true);
+    setEditMode(true);
+    setFormData({
+      ...row,
+      coordinateur: row.coordinateur || {
+        email: "",
+        id: 0,
+        nom: "",
+        prenom: "",
+        telephone: 0,
+      },
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this filiere?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/GestionWEB/filiere/delete/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          setFiliereData((prevData) =>
+            prevData.filter((item) => item.id !== id)
+          );
+          alert("Filiere deleted successfully.");
+        } else {
+          alert("Error deleting filiere.");
+        }
+      } catch (error) {
+        console.error("Error deleting filiere:", error);
+        alert("Error deleting filiere. Please try again.");
+      }
+    }
+  };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
 
-  // Handle form field changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -75,11 +160,49 @@ export default function Filiere() {
     });
   };
 
-  // Function to handle form submission
-  const handleSubmit = () => {
-    console.log("Form Submitted", formData);
-    // Here you can send the formData to your backend or update your state
-    setOpenDialog(false);
+  const handleSubmit = async () => {
+    try {
+      const { libelle, effectif } = formData;
+      const storedCoordinateur = sessionStorage.getItem("Coordinateur");
+      const coordinateur = storedCoordinateur
+        ? JSON.parse(storedCoordinateur)
+        : null;
+      const CorId = coordinateur?.id;
+
+      if (!libelle || !effectif || !CorId) {
+        alert("Please fill all required fields");
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/GestionWEB/filiere/${
+          editMode ? "update" : "add"
+        }/${formData.id || ""}/${libelle}/${effectif}/${editMode ? "" : CorId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const updatedData = await response.json();
+        setFiliereData((prev) =>
+          editMode
+            ? prev.map((item) =>
+                item.id === updatedData.id ? updatedData : item
+              )
+            : [...prev, updatedData]
+        );
+        setOpenDialog(false);
+      } else {
+        alert("Error submitting filiere.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error submitting filiere.");
+    }
   };
 
   return (
@@ -94,15 +217,12 @@ export default function Filiere() {
           onClick={handleOpenDialog}
           sx={{ backgroundColor: "#D4A017" }}
         >
-          nouvelle Filiere
+          Nouvelle Filière
         </Button>
       </div>
-
-      <Divider style={{ margin: "20px" }} />
-      {/* Dialog to show the form */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
-          Ajouter Filiere
+          {editMode ? "Edit Filière" : "Ajouter Filière"}
         </DialogTitle>
         <DialogContent>
           <Box
@@ -134,42 +254,34 @@ export default function Filiere() {
               <OutlinedInput
                 id="effectif"
                 name="effectif"
-                label="Effectif"
                 type="number"
+                label="Effectif"
                 value={formData.effectif}
                 onChange={handleInputChange}
               />
             </FormControl>
           </Box>
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
-            Cancel
+            Annuler
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            Submit
+            {editMode ? "Save" : "Submit"}
           </Button>
         </DialogActions>
       </Dialog>
-      <Paper>
+
+      <Divider style={{ margin: "20px" }} />
+
+      <Paper sx={{ width: "100%" }}>
         <DataGrid
-          rows={rows}
+          rows={filiereData}
           columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-column": {
-              backgroundColor: "black",
-              color: "Black",
-              textDecoration: "BOLD", // Text color of the header
-            },
-            "& .MuiDataGrid-cell": {
-              color: "#4F4F4F", // Text color for cells
-            },
-          }}
+          getRowId={(row) => row.id}
+          pageSize={paginationModel.pageSize}
+          rowsPerPageOptions={[5]}
+          pagination
         />
       </Paper>
     </div>
