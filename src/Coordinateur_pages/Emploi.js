@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card } from "@mui/material"; // Import Card component
+import { Card, Divider } from "@mui/material"; // Import Card component
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -29,6 +29,16 @@ export default function Emploi() {
 
   return (
     <div>
+      <Divider style={{ margin: "20px" }} />
+      <div
+        className="add-form"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <Button variant="contained" sx={{ backgroundColor: "#D4A017" }}>
+          Nouvelle Filière
+        </Button>
+      </div>
+      <Divider style={{ margin: "20px" }} />
       <Card sx={{ maxWidth: 345 }}>
         <CardMedia
           component="img"

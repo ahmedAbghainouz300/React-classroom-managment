@@ -11,6 +11,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
@@ -20,8 +22,20 @@ export default function Matiere() {
     { field: "id", headerName: "ID", width: 80 },
     { field: "libelle", headerName: "LIBELLE", width: 200 },
     {
-      field: "horaire",
-      headerName: "CHARGE HORAIRE",
+      field: "horaire_cours",
+      headerName: "CHARGE HORAIRE COURS",
+      type: "number",
+      width: 100,
+    },
+    {
+      field: "horaire_tp",
+      headerName: "CHARGE HORAIRE TP",
+      type: "number",
+      width: 100,
+    },
+    {
+      field: "horaire_td",
+      headerName: "CHARGE HORAIRE TD",
       type: "number",
       width: 100,
     },
@@ -33,11 +47,17 @@ export default function Matiere() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleEdit(params.row)} // Correctly using handleEdit function
+          onClick={() => handleEdit(params.row)}
         >
           Edit
         </Button>
       ),
+    },
+    {
+      field: "Filiere",
+      headerName: "Filiere",
+      width: 250,
+      valueGetter: (value, row) => `${row.filiere.libelle || ""}`,
     },
     {
       field: "delete",
@@ -47,19 +67,51 @@ export default function Matiere() {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => handleDelete(params.row.id)} // Correctly using handleDelete function
+          onClick={() => handleDelete(params.row.id)}
         >
           Delete
         </Button>
       ),
     },
   ];
+
+  const [filiereData, setFiliereData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/GestionWEB/filiere/get"
+        );
+        const data = await response.json();
+        setFiliereData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     libelle: "",
     id: 0,
-    horaire: 0,
+    horaire_cours: 0,
+    horaire_tp: 0,
+    horaire_td: 0,
+    filiere: {
+      coordinateur: {
+        email: "",
+        id: 0,
+        nom: "",
+        prenom: "",
+        telephone: 0,
+      },
+      effectif: "",
+      id: 0,
+      libelle: "",
+    },
   });
   const [matiereData, setMatiereData] = useState([]);
 
@@ -85,7 +137,21 @@ export default function Matiere() {
     setFormData({
       libelle: "",
       id: 0,
-      horaire: 0,
+      horaire_cours: 0,
+      horaire_tp: 0,
+      horaire_td: 0,
+      filiere: {
+        coordinateur: {
+          email: "",
+          id: 0,
+          nom: "",
+          prenom: "",
+          telephone: 0,
+        },
+        effectif: "",
+        id: 0,
+        libelle: "",
+      },
     });
   };
 
@@ -125,7 +191,6 @@ export default function Matiere() {
     }
   };
 
-  // Function to close the dialog
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -138,24 +203,59 @@ export default function Matiere() {
     });
   };
 
-  // Function to handle form submission
   const handleSubmit = async () => {
     try {
-      const { libelle, horaire } = formData;
-      // const coordinateur = storedCoordinateur
-      //   ? JSON.parse(storedCoordinateur)
-      //   : null;
-      // const CorId = coordinateur?.id;
+      const { libelle, horaire_cours, horaire_tp, horaire_td, filiere } =
+        formData;
+      const filiere_id = filiere ? filiere.id : null;
 
-      if (!libelle || !horaire) {
+      if (!filiere_id) {
+        alert("Please select a Filiere.");
+        return;
+      }
+      if (
+        !libelle ||
+        !horaire_cours ||
+        !filiere ||
+        !horaire_tp ||
+        !horaire_td
+      ) {
         alert("Please fill all required fields");
         return;
       }
 
+      const newMatiere = {
+        id: editMode ? formData.id : Date.now(),
+        libelle,
+        horaire_cours,
+        horaire_tp,
+        horaire_td,
+        filiere,
+      };
+
+      setMatiereData((prev) =>
+        editMode
+          ? prev.map((item) =>
+              item.id === formData.id
+                ? {
+                    ...item,
+                    libelle,
+                    horaire_cours,
+                    horaire_tp,
+                    horaire_td,
+                    filiere,
+                  }
+                : item
+            )
+          : [...prev, newMatiere]
+      );
+
       const response = await fetch(
         `http://localhost:8080/GestionWEB/matiere/${
           editMode ? "update" : "add"
-        }/${formData.id || ""}${libelle}/${horaire}`,
+        }/${
+          editMode ? formData.id + "/" : ""
+        }${libelle}/${horaire_cours}/${horaire_tp}/${horaire_td}/${filiere_id}`,
         {
           method: "PUT",
           headers: {
@@ -171,7 +271,7 @@ export default function Matiere() {
             ? prev.map((item) =>
                 item.id === updatedData.id ? updatedData : item
               )
-            : [...prev, updatedData]
+            : prev
         );
         setOpenDialog(false);
       } else {
@@ -198,6 +298,8 @@ export default function Matiere() {
           Nouvelle Matiere
         </Button>
       </div>
+      <Divider style={{ margin: "20px" }} />
+
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
           {editMode ? "Edit Matiere" : "Ajouter Matiere"}
@@ -228,38 +330,80 @@ export default function Matiere() {
             </FormControl>
 
             <FormControl fullWidth>
-              <InputLabel htmlFor="horaire">Horaire</InputLabel>
+              <InputLabel htmlFor="horaire_cours">Horaire cours</InputLabel>
               <OutlinedInput
-                id="horaire"
-                name="horaire"
+                id="horaire_cours"
+                name="horaire_cours"
                 type="number"
                 label="Horaire"
-                value={formData.horaire}
+                value={formData.horaire_cours}
                 onChange={handleInputChange}
               />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel htmlFor="horaire_tp">Horaire TP</InputLabel>
+              <OutlinedInput
+                id="horaire_tp"
+                name="horaire_tp"
+                type="number"
+                label="Horaire"
+                value={formData.horaire_tp}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel htmlFor="horaire_td">Horaire TD</InputLabel>
+              <OutlinedInput
+                id="horaire_td"
+                name="horaire_td"
+                type="number"
+                label="Horaire"
+                value={formData.horaire_td}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Filiere</InputLabel>
+              <Select
+                name="filiere"
+                value={formData.filiere.id || ""} // Use only the id of the selected filiere
+                onChange={(e) => {
+                  const selectedFiliere = filiereData.find(
+                    (filiere) => filiere.id === e.target.value
+                  );
+                  setFormData({
+                    ...formData,
+                    filiere: selectedFiliere, // Store the entire filiere object here
+                  });
+                }}
+                label="Filiere"
+              >
+                {filiereData.map((filiere) => (
+                  <MenuItem key={filiere.id} value={filiere.id}>
+                    {" "}
+                    {/* Pass only the id as the value */}
+                    {filiere.libelle}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
-            {editMode ? "Save" : "Submit"}
-          </Button>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
-
-      <Divider style={{ margin: "20px" }} />
-
-      <Paper sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <DataGrid
           rows={matiereData}
           columns={columns}
-          getRowId={(row) => row.id}
           pageSize={paginationModel.pageSize}
           rowsPerPageOptions={[5]}
-          pagination
+          checkboxSelection
         />
       </Paper>
     </div>

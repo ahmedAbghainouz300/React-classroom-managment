@@ -177,7 +177,9 @@ export default function Filiere() {
       const response = await fetch(
         `http://localhost:8080/GestionWEB/filiere/${
           editMode ? "update" : "add"
-        }/${formData.id || ""}/${libelle}/${effectif}/${editMode ? "" : CorId}`,
+        }/${editMode ? formData.id + "/" : ""}${libelle}/${effectif}/${
+          editMode ? "" : CorId
+        }`,
         {
           method: "PUT",
           headers: {

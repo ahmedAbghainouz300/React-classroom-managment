@@ -22,10 +22,10 @@ export default function ProfileR() {
 
   // Fetch profile data from session or API when the component mounts
   useEffect(() => {
-    const userResponsable = sessionStorage.getItem("Responsable");
-    console.log("Retrieved Coordinateur from sessionStorage:", userResponsable); // Log the retrieved data
-    if (userResponsable) {
-      setResponsable(JSON.parse(userResponsable)); // Assuming the sessionStorage holds a JSON string
+    const responsable = sessionStorage.getItem("Responsable");
+    console.log("Retrieved Coordinateur from sessionStorage:", responsable); // Log the retrieved data
+    if (responsable) {
+      setResponsable(JSON.parse(responsable)); // Assuming the sessionStorage holds a JSON string
     } else {
       // If no data found in sessionStorage, you can set default values or show a message
       console.log("No Responsable found in sessionStorage.");
@@ -53,9 +53,7 @@ export default function ProfileR() {
   // Handle saving the updated profile
   const handleSave = () => {
     const { email, id, nom, prenom, telephone, password } = responsable;
-    console.log(password);
-    console.log(telephone);
-
+    sessionStorage.setItem("Responsable", JSON.stringify(responsable));
     fetch(
       `http://localhost:8080/GestionWEB/responsable/update/${id}/${nom}/${prenom}/${email}/${password}/${telephone}`,
       {

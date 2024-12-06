@@ -21,6 +21,7 @@ import HomeR from "./Responsable_pages/HomeR";
 import EmploiR from "./Responsable_pages/EmploiR";
 import ProfileR from "./Responsable_pages/ProfileR";
 import ResponsableLayout from "./Layouts/ResponsableLayout";
+import Salle from "./Responsable_pages/Salle";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
         <Route path="/Emploi" element={<EmploiR />} />
         <Route path="/Reservation" element={<Reservation />} />
         <Route path="/ProfileR" element={<ProfileR />} />
+        <Route path="/Salle" element={<Salle />} />
       </Route>
     </>
   )
