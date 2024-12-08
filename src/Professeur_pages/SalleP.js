@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import {
   FormControl,
   InputLabel,
-  OutlinedInput,
   Button,
   Dialog,
   DialogActions,
@@ -14,9 +13,8 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import Divider from "@mui/material/Divider";
 
-export default function Salle() {
+export default function SalleP() {
   const paginationModel = { page: 0, pageSize: 5 };
   const columns_reservations = [
     {
@@ -53,32 +51,50 @@ export default function Salle() {
       valueGetter: (value, row) => `${row.filiere.libelle || ""}`,
     },
     {
+      field: "demander",
+      headerName: "Demander",
+      width: 120,
+      renderCell: (params) => {
+        // Get the logged-in professor's ID from sessionStorage
+        const profId = JSON.parse(sessionStorage.getItem("Professeur"))?.id;
+
+        // Disable the button if the professeur's ID matches the logged-in professor's ID
+        const isDisabledDemander = profId === params.row.professeur.id;
+
+        return (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleDemander(params.row)}
+            disabled={isDisabledDemander} // Disable the button if IDs match
+          >
+            Demander
+          </Button>
+        );
+      },
+    },
+    {
       field: "liberer",
       headerName: "liberer",
       width: 120,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => handleLiberer(params.row.id)}
-        >
-          LIBERER
-        </Button>
-      ),
-    },
-    {
-      field: "view",
-      headerName: "View",
-      width: 80,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="info"
-          onClick={() => handleView(params.row)}
-        >
-          View
-        </Button>
-      ),
+      renderCell: (params) => {
+        // Get the logged-in professor's ID from sessionStorage
+        const profId = JSON.parse(sessionStorage.getItem("Professeur"))?.id;
+
+        // Disable the button if the professeur's ID does not match the logged-in professor's ID
+        const isDisabledLiberer = profId !== params.row.professeur.id;
+
+        return (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => handleLiberer(params.row)}
+            disabled={isDisabledLiberer} // Disable the button if IDs don't match
+          >
+            LIBERER
+          </Button>
+        );
+      },
     },
   ];
 
@@ -89,44 +105,16 @@ export default function Salle() {
     { field: "localisation", headerName: "LOCALISATION", width: 100 },
     { field: "type", headerName: "TYPE", width: 100 },
     {
-      field: "edit",
-      headerName: "Edit",
-      width: 120,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleEdit(params.row)}
-        >
-          Edit
-        </Button>
-      ),
-    },
-    {
-      field: "delete",
-      headerName: "Delete",
-      width: 120,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => handleDelete(params.row.id)}
-        >
-          Delete
-        </Button>
-      ),
-    },
-    {
       field: "view",
       headerName: "View",
-      width: 120,
+      width: 200,
       renderCell: (params) => (
         <Button
           variant="contained"
           color="info"
           onClick={() => handleView(params.row)}
         >
-          View
+          Vos Reservations
         </Button>
       ),
     },
@@ -145,18 +133,49 @@ export default function Salle() {
       ),
     },
   ];
-
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const handleDemander = async (row) => {
+    setOpenDemanderDialog(true);
+    editSalle(row.libelle);
+    setFormDataD({
+      crenaux: {
+        crenaux: "",
+        id: 0,
+      },
+      date: "",
+      etat_reservation: "",
+      filiere: {
+        coordinateur: {
+          email: "",
+          id: 0,
+          nom: "",
+          password: "",
+          prenom: "",
+          telephone: 0,
+        },
+        effectif: 0,
+        id: 0,
+        libelle: "",
+      },
+      id: row.id,
+      professeur: {
+        email: "",
+        id: 0,
+        nom: "",
+        password: "",
+        prenom: "",
+        telephone: 0,
+      },
+      salle: {
+        capacite: 0,
+        id: 0,
+        libelle: "",
+        localisation: "",
+        type: "",
+      },
+    });
+  };
   const [salle, editSalle] = useState("");
-  const [formData, setFormData] = useState({
-    id: 0,
-    capacite: 50,
-    libelle: "",
-    localisation: "",
-    reservations: [],
-    type: "",
-  });
+
   const [formDataR, setFormDataR] = useState({
     crenaux: {
       crenaux: "",
@@ -188,12 +207,49 @@ export default function Salle() {
       telephone: 0,
     },
   });
+  const [formDataD, setFormDataD] = useState({
+    crenaux: {
+      crenaux: "",
+      id: 0,
+    },
+    date: "",
+    etat_reservation: "",
+    filiere: {
+      coordinateur: {
+        email: "",
+        id: 0,
+        nom: "",
+        password: "",
+        prenom: "",
+        telephone: 0,
+      },
+      effectif: 0,
+      id: 0,
+      libelle: "",
+    },
+    id: 0,
+    professeur: {
+      email: "",
+      id: 0,
+      nom: "",
+      password: "",
+      prenom: "",
+      telephone: 0,
+    },
+    salle: {
+      capacite: 0,
+      id: 0,
+      libelle: "",
+      localisation: "",
+      type: "",
+    },
+  });
   const [salleData, setSalleData] = useState([]);
   const [filiereData, setFiliereData] = useState([]);
-  const [professeurData, setProfesseurData] = useState([]);
   const [crenauxData, setCrenauxData] = useState([]);
   const [openViewDialog, setOpenViewDialog] = useState(false);
   const [openReserverDialog, setOpenReserverDialog] = useState(false);
+  const [openDemanderDialog, setOpenDemanderDialog] = useState(false);
   const [activeReservations, setActiveReservations] = useState([]);
   const [reservationData, setReservationData] = useState([]);
 
@@ -206,19 +262,13 @@ export default function Salle() {
         const response2 = await fetch(
           "http://localhost:8080/GestionWEB/filiere/get"
         );
-        const response3 = await fetch(
-          "http://localhost:8080/GestionWEB/professeur/get"
-        );
         const response4 = await fetch(
           "http://localhost:8080/GestionWEB/crenaux/get"
         );
         const data1 = await response1.json();
         setSalleData(data1);
-        console.log(salleData);
         const data2 = await response2.json();
         setFiliereData(data2);
-        const data3 = await response3.json();
-        setProfesseurData(data3);
         const data4 = await response4.json();
         setCrenauxData(data4);
       } catch (error) {
@@ -229,97 +279,8 @@ export default function Salle() {
     fetchData();
   }, []);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    setEditMode(false);
-    setFormData({
-      id: 0,
-      capacite: 0,
-      libelle: "",
-      localisation: "",
-      reservations: [],
-      type: "",
-    });
-  };
-
-  const handleEdit = (row) => {
-    setOpenDialog(true);
-    setEditMode(true);
-    setFormData({
-      ...row,
-    });
-  };
-
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this salle?"
-    );
-    if (confirmDelete) {
-      try {
-        const response = await fetch(
-          `http://localhost:8080/GestionWEB/salle/delete/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (response.ok) {
-          setSalleData((prevData) => prevData.filter((item) => item.id !== id));
-          alert("Salle deleted successfully.");
-        } else {
-          alert("Error deleting salle.");
-        }
-      } catch (error) {
-        console.error("Error deleting salle:", error);
-        alert("Error deleting salle. Please try again.");
-      }
-    }
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const { libelle, type, localisation, capacite } = formData;
-
-      if (!libelle || !type || !localisation || !capacite) {
-        alert("Please fill all required fields");
-        return;
-      }
-
-      const response = await fetch(
-        `http://localhost:8080/GestionWEB/salle/${
-          editMode ? "update" : "add"
-        }/${
-          editMode ? formData.id + "/" : ""
-        }${libelle}/${type}/${localisation}/${capacite}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const updatedData = await response.json();
-        setSalleData((prev) =>
-          editMode
-            ? prev.map((item) =>
-                item.id === updatedData.id ? updatedData : item
-              )
-            : [...prev, updatedData]
-        );
-        setOpenDialog(false);
-      } else {
-        alert("Error submitting salle.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error submitting salle.");
-    }
+  const handleCloseDemanderDialog = () => {
+    setOpenDemanderDialog(false);
   };
 
   // New function to handle the view action
@@ -338,7 +299,6 @@ export default function Salle() {
       }
 
       const text = await response.text(); // Read raw response
-      console.log("Raw Response:", text); // Log raw text
       const data = text ? JSON.parse(text) : []; // Parse JSON if available
 
       setReservationData(data);
@@ -397,15 +357,16 @@ export default function Salle() {
 
   const handleSubmitR = async () => {
     try {
-      const { filiere, professeur, crenaux } = formDataR;
-      console.log(formDataR.id, filiere, professeur, crenaux);
-      if (!filiere || !professeur || !crenaux) {
+      const { filiere, crenaux } = formDataR;
+
+      console.log(formDataR.id, filiere, crenaux);
+      const prof = JSON.parse(sessionStorage.getItem("Professeur"));
+      if (!filiere || !crenaux) {
         alert("Please fill all required fields");
         return;
       }
-
       const response = await fetch(
-        `http://localhost:8080/GestionWEB/reservation/add/${crenaux}/${professeur.id}/${formDataR.id}/${filiere.id}`,
+        `http://localhost:8080/GestionWEB/reservation/add/${crenaux}/${prof.id}/${formDataR.id}/${filiere.id}`,
         {
           method: "PUT",
           headers: {
@@ -432,10 +393,68 @@ export default function Salle() {
       alert("Error submitting reservation.");
     }
   };
+  const handleSubmitD = async () => {
+    try {
+      const { filiere } = formDataD;
 
-  const handleLiberer = () => {};
+      // Parse the 'Professeur' object from sessionStorage
+      const prof = JSON.parse(sessionStorage.getItem("Professeur"));
 
-  // Function to close the view dialog
+      if (!prof || !prof.id) {
+        alert("Professeur information is missing.");
+        return;
+      }
+
+      const prof_id = prof.id; // Now, this should be the correct ID.
+
+      console.log(formDataD.id, filiere, prof);
+
+      if (!filiere || !prof) {
+        alert("Please fill all required fields");
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/GestionWEB/demande/add/${prof_id}/${formDataD.id}/${filiere.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Parse the response as JSON
+      const data = await response.json();
+
+      alert(data.message);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error submitting reservation.");
+    }
+  };
+
+  const handleLiberer = async (row) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to free this reservation?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/GestionWEB/liberationd/add/${row.id}`,
+          {
+            method: "PUT",
+          }
+        );
+        const data = await response.json();
+        alert(data.message);
+      } catch (error) {
+        console.error("Error adding liberation:", error);
+        alert("Error deleting liberation. Please try again.");
+      }
+    }
+  };
+
   const handleCloseViewDialog = () => {
     setOpenViewDialog(false);
   };
@@ -445,100 +464,6 @@ export default function Salle() {
   };
   return (
     <div className="container">
-      <Divider style={{ margin: "20px" }} />
-      <div
-        className="add-form"
-        style={{ display: "flex", justifyContent: "center" }}
-      >
-        <Button
-          variant="contained"
-          onClick={handleOpenDialog}
-          sx={{ backgroundColor: "#D4A017" }}
-        >
-          Nouvelle Salle
-        </Button>
-      </div>
-      <Divider style={{ margin: "20px" }} />
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
-          {editMode ? "Edit Salle" : "Ajouter Salle"}
-        </DialogTitle>
-        <DialogContent>
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "300px",
-              "& > :not(style)": { m: 1 },
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <FormControl fullWidth>
-              <InputLabel htmlFor="libelle">Libelle</InputLabel>
-              <OutlinedInput
-                id="libelle"
-                name="libelle"
-                label="Libelle"
-                value={formData.libelle}
-                onChange={(e) =>
-                  setFormData({ ...formData, libelle: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="type">Type</InputLabel>
-              <OutlinedInput
-                id="type"
-                name="type"
-                label="Type"
-                value={formData.type}
-                onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="localisation">Localisation</InputLabel>
-              <OutlinedInput
-                id="localisation"
-                name="localisation"
-                label="Localisation"
-                value={formData.localisation}
-                onChange={(e) =>
-                  setFormData({ ...formData, localisation: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel htmlFor="capacite">Capacite</InputLabel>
-              <OutlinedInput
-                id="capacite"
-                name="capacite"
-                label="Capacite"
-                type="number"
-                value={formData.capacite}
-                onChange={(e) =>
-                  setFormData({ ...formData, capacite: e.target.value })
-                }
-              />
-            </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
-            {editMode ? "Save" : "Submit"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       {/* View Dialog with Reservation Data */}
       <Dialog
         open={openViewDialog}
@@ -622,34 +547,6 @@ export default function Salle() {
               width: "400px",
             }}
           >
-            <InputLabel>Professeur</InputLabel>
-            <Select
-              name="professeur"
-              value={formDataR.professeur.id || ""}
-              onChange={(e) => {
-                const selectedProfesseur = professeurData.find(
-                  (prof) => prof.id === e.target.value
-                );
-                setFormDataR({
-                  ...formDataR,
-                  professeur: selectedProfesseur,
-                });
-              }}
-              label="Filiere"
-            >
-              {professeurData.map((prof) => (
-                <MenuItem key={prof.id} value={prof.id}>
-                  {prof.nom + " " + prof.prenom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl
-            sx={{
-              width: "400px",
-            }}
-          >
             <InputLabel>Crenaux</InputLabel>
             <Select
               name="crenaux"
@@ -672,7 +569,61 @@ export default function Salle() {
             Annuler
           </Button>
           <Button onClick={handleSubmitR} color="primary">
-            {editMode ? "Save" : "Submit"}
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDemanderDialog} onClose={handleCloseDemanderDialog}>
+        <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
+          {`Demander la reservation de ${salle}`}
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            height: "300px",
+            width: "500px",
+            "& > :not(style)": { m: 1 },
+          }}
+        >
+          <Box component="form" noValidate autoComplete="off"></Box>
+          <FormControl
+            sx={{
+              width: "400px",
+            }}
+          >
+            <InputLabel>Filiere</InputLabel>
+            <Select
+              name="filiere"
+              value={formDataD.filiere.id || ""}
+              onChange={(e) => {
+                const selectedFiliere = filiereData.find(
+                  (filiere) => filiere.id === e.target.value
+                );
+                setFormDataD({
+                  ...formDataD,
+                  filiere: selectedFiliere,
+                });
+              }}
+              label="Filiere"
+            >
+              {filiereData.map((filiere) => (
+                <MenuItem key={filiere.id} value={filiere.id}>
+                  {filiere.libelle}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDemanderDialog} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleSubmitD} color="primary">
+            Submit
           </Button>
         </DialogActions>
       </Dialog>

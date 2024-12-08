@@ -48,7 +48,7 @@ const rows = [
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function Liberation() {
+export default function LiberationP() {
   const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
     libelle: "",

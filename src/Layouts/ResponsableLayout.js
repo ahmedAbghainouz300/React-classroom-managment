@@ -31,7 +31,7 @@ export default function ResponsableLayout() {
     if (setting === "Logout") {
       navigate("/");
     } else if (setting === "Profile") {
-      navigate("/ProfileR");
+      navigate("/Responsable/ProfileR");
     }
     setAnchorElUser(null);
   };
@@ -86,7 +86,7 @@ export default function ResponsableLayout() {
                   <NavLink
                     style={{ textDecoration: "none", flex: 1 }}
                     key={page}
-                    to={`/${page}`}
+                    to={`/Responsable/${page}`}
                     className={({ isActive }) => (isActive ? "active" : "")} // Add 'active' class when the link is active
                   >
                     <Button

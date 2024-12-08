@@ -78,7 +78,6 @@ export default function Reservation() {
   return (
     <div className="container">
       <Divider style={{ margin: "20px" }} />
-      {/* Dialog to show the form */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle style={{ backgroundColor: "#D4A017", color: "black" }}>
           Ajouter Filiere

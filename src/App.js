@@ -22,6 +22,8 @@ import EmploiR from "./Responsable_pages/EmploiR";
 import ProfileR from "./Responsable_pages/ProfileR";
 import ResponsableLayout from "./Layouts/ResponsableLayout";
 import Salle from "./Responsable_pages/Salle";
+import LiberationP from "./Professeur_pages/LiberationP";
+import SalleP from "./Professeur_pages/SalleP";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,30 +32,31 @@ const router = createBrowserRouter(
       <Route path="/" element={<Login />} />
       <Route element={<CoordinateurLayout />}>
         <Route path="/CoordinateurLayout" element={<Home />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Filiere" element={<Filiere />} />
-        <Route path="/Matiere" element={<Matiere />} />
-        <Route path="/Emploi" element={<Emploi />} />
-        <Route path="/Reservation" element={<Reservation />} />
-        <Route path="/Profile_c" element={<ProfileC />} />
+        <Route path="/Coordinateur/" element={<Home />} />
+        <Route path="/Coordinateur/Home" element={<Home />} />
+        <Route path="/Coordinateur/Filiere" element={<Filiere />} />
+        <Route path="/Coordinateur/Matiere" element={<Matiere />} />
+        <Route path="/Coordinateur/Emploi" element={<Emploi />} />
+        <Route path="/Coordinateur/Reservation" element={<Reservation />} />
+        <Route path="/Coordinateur/Profile_c" element={<ProfileC />} />
       </Route>
       <Route element={<ProfesseurLayout />}>
         <Route path="/ProfesseurLayout" element={<HomeP />} />
-        <Route path="/" element={<HomeP />} />
-        <Route path="/Home" element={<HomeP />} />
-        <Route path="/Emploi" element={<EmploiP />} />
-        <Route path="/Reservation" element={<Reservation />} />
-        <Route path="/ProfileP" element={<ProfileP />} />
+        <Route path="/Professeur/" element={<HomeP />} />
+        <Route path="/Professeur/Home" element={<HomeP />} />
+        <Route path="/Professeur/Emploi" element={<EmploiP />} />
+        <Route path="/Professeur/Liberation" element={<LiberationP />} />
+        <Route path="/Professeur/Salle" element={<SalleP />} />
+        <Route path="/Professeur/ProfileP" element={<ProfileP />} />
       </Route>
       <Route element={<ResponsableLayout />}>
         <Route path="/ResponsableLayout" element={<HomeR />} />
-        <Route path="/" element={<HomeR />} />
-        <Route path="/Home" element={<HomeR />} />
-        <Route path="/Emploi" element={<EmploiR />} />
-        <Route path="/Reservation" element={<Reservation />} />
-        <Route path="/ProfileR" element={<ProfileR />} />
-        <Route path="/Salle" element={<Salle />} />
+        <Route path="/Responsable/" element={<HomeR />} />
+        <Route path="/Responsable/Home" element={<HomeR />} />
+        <Route path="/Responsable/Emploi" element={<EmploiR />} />
+        <Route path="/Responsable/Reservation" element={<Reservation />} />
+        <Route path="/Responsable/ProfileR" element={<ProfileR />} />
+        <Route path="/Responsable/Salle" element={<Salle />} />
       </Route>
     </>
   )

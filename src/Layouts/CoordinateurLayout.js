@@ -33,7 +33,7 @@ export default function CoordinateurLayout() {
       navigate("/"); // Navigates to the login page (root)
     }
     if (setting === "Profile") {
-      navigate("/profile_c");
+      navigate("/Coordinateur/profile_c");
     }
     setAnchorElUser(null);
   };
@@ -88,7 +88,7 @@ export default function CoordinateurLayout() {
                   <NavLink
                     style={{ textDecoration: "none", flex: 1 }}
                     key={page}
-                    to={`/${page}`}
+                    to={`/Coordinateur/${page}`}
                     className={({ isActive }) => (isActive ? "active" : "")} // Add 'active' class when the link is active
                   >
                     <Button

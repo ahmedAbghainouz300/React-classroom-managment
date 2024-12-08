@@ -107,6 +107,7 @@ export default function Login() {
 
       if (user) {
         sessionStorage.setItem("Professeur", JSON.stringify(user));
+        console.log(sessionStorage.getItem("Professeur"));
         navigate("/ProfesseurLayout");
       } else {
         setError("Invalid username, password, or role.");

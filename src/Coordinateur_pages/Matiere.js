@@ -383,8 +383,6 @@ export default function Matiere() {
               >
                 {filiereData.map((filiere) => (
                   <MenuItem key={filiere.id} value={filiere.id}>
-                    {" "}
-                    {/* Pass only the id as the value */}
                     {filiere.libelle}
                   </MenuItem>
                 ))}

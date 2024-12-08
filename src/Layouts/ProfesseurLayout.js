@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Home", "Emploi", "Reservation", "Liberation"];
+const pages = ["Home", "Emploi", "Salle", "Liberation"];
 const settings = ["Profile", "Logout"];
 
 export default function ProfesseurLayout() {
@@ -32,7 +32,7 @@ export default function ProfesseurLayout() {
     if (setting === "Logout") {
       navigate("/"); // Navigates to the login page (root)
     } else if (setting === "Profile") {
-      navigate("/ProfileP"); // Navigates to the login page (root)
+      navigate("/Professeur/ProfileP"); // Navigates to the login page (root)
     }
     setAnchorElUser(null);
   };
@@ -87,7 +87,7 @@ export default function ProfesseurLayout() {
                   <NavLink
                     style={{ textDecoration: "none", flex: 1 }}
                     key={page}
-                    to={`/${page}`}
+                    to={`/Professeur/${page}`}
                     className={({ isActive }) => (isActive ? "active" : "")} // Add 'active' class when the link is active
                   >
                     <Button
