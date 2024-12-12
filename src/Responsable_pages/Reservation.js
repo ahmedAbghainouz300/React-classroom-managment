@@ -3,6 +3,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
 import Divider from "@mui/material/Divider";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export default function Reservation() {
   const [reservationData, setReservationData] = useState([]);
@@ -72,6 +75,7 @@ export default function Reservation() {
       },
     },
   ];
+  const [loading, setLoading] = useState(true);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -165,6 +169,7 @@ export default function Reservation() {
         );
 
         setReservationData(updatedReservations);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -173,30 +178,43 @@ export default function Reservation() {
     fetchData();
   }, []);
 
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={5}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <div className="container">
       <Divider style={{ margin: "20px" }} />
 
-      <Paper>
-        <DataGrid
-          rows={reservationData}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
+      <Box p={2}>
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
           sx={{
-            border: 0,
-            "& .MuiDataGrid-column": {
-              backgroundColor: "black",
-              color: "Black",
-              textDecoration: "BOLD", // Text color of the header
-            },
-            "& .MuiDataGrid-cell": {
-              color: "#4F4F4F", // Text color for cells
-            },
+            backgroundColor: "#f5f5f5",
+            padding: "10px",
+            borderRadius: "5px",
           }}
-        />
-      </Paper>
+        >
+          Reservations
+        </Typography>
+        <Paper elevation={3} sx={{ padding: 2 }}>
+          <DataGrid
+            rows={reservationData}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10, 15]}
+          />
+        </Paper>
+      </Box>
     </div>
   );
 }

@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Home", "Filiere", "Matiere", "Emploi", "Reservation"];
+const pages = ["Home", "Filiere", "Matiere", "Seance"];
 const settings = ["Profile", "Logout"];
 
 export default function CoordinateurLayout() {

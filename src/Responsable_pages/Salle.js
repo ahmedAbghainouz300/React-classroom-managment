@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
-
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import {
   FormControl,
   InputLabel,
@@ -17,6 +19,7 @@ import {
 import Divider from "@mui/material/Divider";
 
 export default function Salle() {
+  const [loading, setLoading] = useState(true);
   const paginationModel = { page: 0, pageSize: 5 };
   const columns_reservations = [
     {
@@ -221,6 +224,7 @@ export default function Salle() {
         setProfesseurData(data3);
         const data4 = await response4.json();
         setCrenauxData(data4);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -462,6 +466,17 @@ export default function Salle() {
   const handleCloseReserverDialog = () => {
     setOpenReserverDialog(false);
   };
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={5}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <div className="container">
       <Divider style={{ margin: "20px" }} />
@@ -697,14 +712,28 @@ export default function Salle() {
       </Dialog>
 
       <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={salleData}
-          columns={columns}
-          pageSize={paginationModel.pageSize}
-          rowsPerPageOptions={[5]}
-          pagination
-          checkboxSelection
-        />
+        <Box p={2}>
+          <Typography
+            variant="h5"
+            align="center"
+            gutterBottom
+            sx={{
+              backgroundColor: "#f5f5f5",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            Salles
+          </Typography>
+          <Paper elevation={3} sx={{ padding: 2 }}>
+            <DataGrid
+              rows={salleData}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5, 10, 15]}
+            />
+          </Paper>
+        </Box>
       </div>
     </div>
   );

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
 import {
   FormControl,
   InputLabel,
@@ -17,32 +20,39 @@ import {
 import Divider from "@mui/material/Divider";
 
 export default function Matiere() {
+  const [loading, setLoading] = useState(true);
   const paginationModel = { page: 0, pageSize: 5 };
   const columns = [
-    { field: "id", headerName: "ID", width: 80 },
-    { field: "libelle", headerName: "LIBELLE", width: 200 },
+    { field: "id", headerName: "ID", width: 100 },
+    { field: "libelle", headerName: "LIBELLE", width: 100 },
     {
       field: "horaire_cours",
-      headerName: "CHARGE HORAIRE COURS",
+      headerName: "CHARGE COURS",
       type: "number",
-      width: 100,
+      width: 130,
     },
     {
       field: "horaire_tp",
-      headerName: "CHARGE HORAIRE TP",
+      headerName: "CHARGE TP",
       type: "number",
       width: 100,
     },
     {
       field: "horaire_td",
-      headerName: "CHARGE HORAIRE TD",
+      headerName: "CHARGE TD",
       type: "number",
       width: 100,
     },
     {
+      field: "Filiere",
+      headerName: "Filiere",
+      width: 100,
+      valueGetter: (value, row) => `${row.filiere.libelle || ""}`,
+    },
+    {
       field: "edit",
       headerName: "Edit",
-      width: 120,
+      width: 100,
       renderCell: (params) => (
         <Button
           variant="contained"
@@ -54,15 +64,9 @@ export default function Matiere() {
       ),
     },
     {
-      field: "Filiere",
-      headerName: "Filiere",
-      width: 250,
-      valueGetter: (value, row) => `${row.filiere.libelle || ""}`,
-    },
-    {
       field: "delete",
       headerName: "Delete",
-      width: 120,
+      width: 100,
       renderCell: (params) => (
         <Button
           variant="contained"
@@ -84,6 +88,7 @@ export default function Matiere() {
         );
         const data = await response.json();
         setFiliereData(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -282,7 +287,16 @@ export default function Matiere() {
       alert("Error submitting matiere.");
     }
   };
-
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={5}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <div className="container">
       <Divider style={{ margin: "20px" }} />
@@ -395,15 +409,30 @@ export default function Matiere() {
           <Button onClick={handleSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <DataGrid
-          rows={matiereData}
-          columns={columns}
-          pageSize={paginationModel.pageSize}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
-        />
-      </Paper>
+
+      <Box p={2}>
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
+          sx={{
+            backgroundColor: "#f5f5f5",
+            padding: "10px",
+            borderRadius: "5px",
+          }}
+        >
+          Matieres
+        </Typography>
+        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <DataGrid
+            rows={matiereData}
+            columns={columns}
+            pageSize={paginationModel.pageSize}
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+          />
+        </Paper>
+      </Box>
     </div>
   );
 }

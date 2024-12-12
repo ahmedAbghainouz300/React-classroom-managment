@@ -9,7 +9,6 @@ import CoordinateurLayout from "./Layouts/CoordinateurLayout";
 import Home from "./Coordinateur_pages/Home";
 import Filiere from "./Coordinateur_pages/Filiere";
 import Matiere from "./Coordinateur_pages/Matiere";
-import Emploi from "./Coordinateur_pages/Emploi";
 import Reservation from "./Responsable_pages/Reservation";
 import Login from "./Login_page/Login";
 import ProfileC from "./Coordinateur_pages/profile_c";
@@ -24,6 +23,7 @@ import ResponsableLayout from "./Layouts/ResponsableLayout";
 import Salle from "./Responsable_pages/Salle";
 import LiberationP from "./Professeur_pages/LiberationP";
 import SalleP from "./Professeur_pages/SalleP";
+import Seance from "./Coordinateur_pages/Seance";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,8 +36,7 @@ const router = createBrowserRouter(
         <Route path="/Coordinateur/Home" element={<Home />} />
         <Route path="/Coordinateur/Filiere" element={<Filiere />} />
         <Route path="/Coordinateur/Matiere" element={<Matiere />} />
-        <Route path="/Coordinateur/Emploi" element={<Emploi />} />
-        <Route path="/Coordinateur/Reservation" element={<Reservation />} />
+        <Route path="/Coordinateur/Seance" element={<Seance />} />
         <Route path="/Coordinateur/Profile_c" element={<ProfileC />} />
       </Route>
       <Route element={<ProfesseurLayout />}>
