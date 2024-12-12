@@ -10,7 +10,7 @@ import Home from "./Coordinateur_pages/Home";
 import Filiere from "./Coordinateur_pages/Filiere";
 import Matiere from "./Coordinateur_pages/Matiere";
 import Emploi from "./Coordinateur_pages/Emploi";
-import Reservation from "./Coordinateur_pages/Reservation";
+import Reservation from "./Responsable_pages/Reservation";
 import Login from "./Login_page/Login";
 import ProfileC from "./Coordinateur_pages/profile_c";
 import ProfesseurLayout from "./Layouts/ProfesseurLayout";

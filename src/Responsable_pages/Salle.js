@@ -60,7 +60,7 @@ export default function Salle() {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => handleLiberer(params.row.id)}
+          onClick={() => handleLiberer(params.row)}
         >
           LIBERER
         </Button>
@@ -433,7 +433,26 @@ export default function Salle() {
     }
   };
 
-  const handleLiberer = () => {};
+  const handleLiberer = async (row) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to free this reservation?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/GestionWEB/liberationd/add/${row.id}`,
+          {
+            method: "PUT",
+          }
+        );
+        const data = await response.json();
+        alert(data.message);
+      } catch (error) {
+        console.error("Error adding liberation:", error);
+        alert("Error deleting liberation. Please try again.");
+      }
+    }
+  };
 
   // Function to close the view dialog
   const handleCloseViewDialog = () => {
